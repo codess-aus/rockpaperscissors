@@ -4,70 +4,80 @@
 # The game is won by the player who wins the best of 3 rounds.
 # make the code as pythonic as possible
 
-# Import the random module to generate random choices for the computer
 import random
+from enum import Enum
 
-# Function to get the user's choice
+class Choice(Enum):
+    ROCK = "rock"
+    PAPER = "paper"
+    SCISSORS = "scissors"
+
+VALID_CHOICES = [c.value for c in Choice]
+WIN_MESSAGE = "You win!"
+LOSE_MESSAGE = "Computer wins!"
+TIE_MESSAGE = "It's a tie!"
+GAME_RULES = {
+    Choice.ROCK.value: Choice.SCISSORS.value,
+    Choice.PAPER.value: Choice.ROCK.value,
+    Choice.SCISSORS.value: Choice.PAPER.value
+}
+
 def get_user_choice():
-    # Prompt the user to enter their choice
-    user_choice = input("Enter your choice: rock, paper, or scissors: ")
-    # Return the user's choice
+    """Prompt the user for their choice until they enter a valid one.
+    
+    Returns:
+        str: The user's choice.
+    """
+    user_choice = ""
+    while user_choice not in VALID_CHOICES:
+        user_choice = input("Enter your choice: rock, paper, or scissors: ")
+        if user_choice not in VALID_CHOICES:
+            print("Invalid choice. Please enter rock, paper, or scissors.")
     return user_choice
 
-# Function to get the computer's choice
 def get_computer_choice():
-    # The computer randomly chooses from rock, paper, or scissors
-    computer_choice = random.choice(["rock", "paper", "scissors"])
-    # Return the computer's choice
-    return computer_choice
-
-# Function to determine the winner of the game
-def determine_winner(user_choice, computer_choice):
-    # If the user's choice is the same as the computer's, it's a tie
-    if user_choice == computer_choice:
-        return "It's a tie!"
-    # If the user chooses rock and the computer chooses scissors, the user wins
-    elif user_choice == "rock" and computer_choice == "scissors":
-        return "You win!"
-    # If the user chooses scissors and the computer chooses paper, the user wins
-    elif user_choice == "scissors" and computer_choice == "paper":
-        return "You win!"
-    # If the user chooses paper and the computer chooses rock, the user wins
-    elif user_choice == "paper" and computer_choice == "rock":
-        return "You win!"
-    # In all other cases, the computer wins
-    else:
-        return "Computer wins!"
+    """Get the computer's choice.
     
-# Main function to run the game
+    Returns:
+        str: The computer's choice, selected randomly.
+    """
+    return random.choice(VALID_CHOICES)
+
+def determine_winner(user_choice, computer_choice):
+    """Determine the winner of a round.
+    
+    Args:
+        user_choice (str): The user's choice.
+        computer_choice (str): The computer's choice.
+    
+    Returns:
+        str: A message indicating the result of the round.
+    """
+    if user_choice == computer_choice:
+        return TIE_MESSAGE
+    if GAME_RULES[user_choice] == computer_choice:
+        return WIN_MESSAGE
+    return LOSE_MESSAGE
+
 def main():
-    # Initialize scores for the user and the computer
+    """Run the main game loop."""
     user_score = 0
     computer_score = 0
-    # Continue the game until either the user or the computer has 2 points
     while user_score < 2 and computer_score < 2:
-        # Get the user's and the computer's choices
         user_choice = get_user_choice()
         computer_choice = get_computer_choice()
-        # Print the computer's choice
-        print(f"Computer chose: {computer_choice}")
-        # Print the result of the game
-        print(determine_winner(user_choice, computer_choice))
-        # If the user wins, increment the user's score
-        if determine_winner(user_choice, computer_choice) == "You win!":
+        result = determine_winner(user_choice, computer_choice)
+        if result == WIN_MESSAGE:
             user_score += 1
-        # If the computer wins, increment the computer's score
-        elif determine_winner(user_choice, computer_choice) == "Computer wins!":
+        elif result == LOSE_MESSAGE:
             computer_score += 1
-        # Print the current scores
+        print(f"Computer chose: {computer_choice}")
+        print(result)
         print(f"User score: {user_score}, Computer score: {computer_score}")
-    # If the user's score is 2, the user wins the game
     if user_score == 2:
         print("You win the game!")
-    # Otherwise, the computer wins the game
     else:
         print("Computer wins the game!")
 
-# If this script is run directly (not imported), start the game
 if __name__ == "__main__":
     main()
