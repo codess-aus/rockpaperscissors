@@ -80,4 +80,5 @@ def main():
         print("Computer wins the game!")
 
 if __name__ == "__main__":
-    main()
+  main()
+
